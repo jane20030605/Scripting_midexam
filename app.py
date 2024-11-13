@@ -1,5 +1,8 @@
+# 執行檔/選單選擇與互動
+
 from lib import (
     connect_db,
+    create_table,
     import_movies,
     list_movies,
     add_movie,
@@ -28,12 +31,13 @@ def main():
 
     # 連接資料庫
     conn = connect_db(DB_PATH)
+    # 初始化資料表（確保資料表存在）
+    create_table(conn)
 
     while True:
         show_menu()
-
+        choice = int(input("請選擇操作功能: "))
         try:
-            choice = int(input("請選擇操作選項 (1-7): "))
             if choice == 1:
                 import_movies(conn, JSON_IN_PATH)
             elif choice == 2:
@@ -46,11 +50,9 @@ def main():
                 delete_movie(conn)
             elif choice == 6:
                 export_movies(conn, JSON_OUT_PATH)
-            elif choice == 7:
-                print("系統已退出。")
-                break
             else:
-                print("請輸入正確的選項！")
+                print("系統已退出!")
+                break
         except ValueError:
             print("請輸入有效的數字選項！")
         except Exception as e:

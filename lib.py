@@ -1,17 +1,40 @@
+# 連接資料庫與操作資料表執行
+
 import sqlite3
 import json
 
+DB_PATH = 'movies.db'
+JSON_IN_PATH = 'movies.json'
+JSON_OUT_PATH = 'exported.json'
+
 
 def connect_db(db_path: str) -> sqlite3.Connection:
-    """連接到 SQLite 資料庫"""
+    """連接到 SQLite 資料庫
+       並設定 row_factory 以便取得字典格式"""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     # 設定查詢結果為字典格式，方便通過欄位名稱取值
     return conn
 
 
+def create_table(conn):
+    """建立 movies 資料表"""
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS movies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            director TEXT NOT NULL,
+            genre TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            rating REAL CHECK(rating >= 1.0 AND rating <= 10.0)
+        )
+    """)
+    conn.commit()
+
+
 def import_movies(conn: sqlite3.Connection, json_file: str):
-    """從 JSON 檔案匯入電影資料"""
+    """從 movies.json 檔案匯入電影資料至資料庫"""
     try:
         with open(json_file, 'r', encoding='utf-8') as f:
             movies = json.load(f)  # 載入 JSON 檔案內容為電影資料
@@ -24,12 +47,15 @@ def import_movies(conn: sqlite3.Connection, json_file: str):
                 """, (movie['title'], movie['director'], movie['genre'],
                       movie['year'], movie['rating']))
         print("電影已匯入")  # 匯入成功提示
+
     except FileNotFoundError:
         print("錯誤: 找不到電影資料檔案！")
         # 當找不到檔案時，顯示錯誤訊息
     except json.JSONDecodeError:
         print("錯誤: JSON 格式錯誤！")
         # 當 JSON 格式錯誤時，顯示錯誤訊息
+    except Exception as e:
+        print(f'發生其它錯誤: {e}')
 
 
 def list_movies(conn: sqlite3.Connection):
@@ -168,8 +194,8 @@ def delete_movie(conn: sqlite3.Connection):
         movie_title = input("請輸入要刪除的電影名稱: ")
         # 輸入電影名稱
         cursor = conn.execute(
-            "SELECT * FROM movies WHERE title = ?",
-            (movie_title,)
+            "SELECT * FROM movies WHERE title LIKE ?",
+            (f"%{movie_title}%",)
         )
         # 查詢該電影資料
         movie = cursor.fetchone()
@@ -181,6 +207,7 @@ def delete_movie(conn: sqlite3.Connection):
             print(f"{movie['title']:<20}{movie['director']:<20}"
                   f"{movie['genre']:<10}{movie['year']:<10}"
                   f"{movie['rating']:<10}")
+                  
             confirm = input("是否要刪除(y/n): ").strip().lower()
             if confirm == 'y':
                 # 執行刪除操作
@@ -207,4 +234,25 @@ def export_movies(conn: sqlite3.Connection, output_file: str):
             # 將電影資料以 JSON 格式寫入檔案
         print(f"電影資料已匯出至 {output_file}")  # 匯出成功提示
     else:
-        print("未匯出任何資料")  # 如果沒有匯出資料，顯示提示
+        # 當使用者選擇匯出特定電影
+        title = input("請輸入要匯出的電影名稱: ")
+        cursor = conn.execute("SELECT * FROM movies WHERE title LIKE ?", (f"%{title}%",))
+        movies = cursor.fetchall()
+
+    # 檢查是否有符合條件的電影資料
+    if not movies:
+        print("查無符合條件的電影資料")
+        return
+
+    # 將查詢結果轉換成 JSON 格式
+    movie_list = [{"title": movie['title'], 
+                   "director": movie['director'],
+                   "genre": movie['genre'], 
+                   "year": movie['year'],
+                   "rating": movie['rating']} for movie in movies]
+
+    # 將電影資料匯出至指定的 JSON 檔案
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(movie_list, f, ensure_ascii=False, indent=4)
+
+    print(f"電影資料已匯出至 {output_file}")
