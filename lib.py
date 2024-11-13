@@ -71,12 +71,13 @@ def list_movies(conn: sqlite3.Connection):
             # 當資料庫中沒有電影時，顯示提示
         else:
             # 顯示電影資料
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<10}{'上映年份':<10}{'評分':<10}")
-            print("-" * 70)
+            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<10}{'評分':<10}")
+            print("-" * 85)
+            # 格式化列出電影資料
             for movie in movies:
                 print(f"{movie['title']:<20}{movie['director']:<20}"
-                      f"{movie['genre']:<10}{movie['year']:<10}"
-                      f"{movie['rating']:<10}")
+                      f"{movie['genre']:<20}{movie['year']:<10}"
+                      f"{movie['rating']:<10.1f}")
     else:
         title = input("請輸入電影名稱: ")
         # 如果不查詢全部電影，則要求輸入電影名稱
@@ -91,12 +92,12 @@ def list_movies(conn: sqlite3.Connection):
             # 如果沒有查詢到電影，顯示提示
         else:
             # 顯示查詢結果
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<10}{'上映年份':<10}{'評分':<10}")
-            print("-" * 70)
+            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<10}{'評分':<10}")
+            print("-" * 85)
             for movie in movies:
                 print(f"{movie['title']:<20}{movie['director']:<20}"
-                      f"{movie['genre']:<10}{movie['year']:<10}"
-                      f"{movie['rating']:<10}")
+                      f"{movie['genre']:<15}{movie['year']:<10}"
+                      f"{movie['rating']:<10.1f}")
 
 
 def add_movie(conn: sqlite3.Connection):
@@ -132,11 +133,11 @@ def modify_movie(conn: sqlite3.Connection):
     movie = cursor.fetchone()
     if movie:
         # 顯示該電影資料
-        print(f"{'電影名稱':<20}{'導演':<20}{'類型':<10}{'上映年份':<10}{'評分':<10}")
-        print("-" * 70)
+        print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<10}{'評分':<10}")
+        print("-" * 85)
         print(f"{movie['title']:<20}{movie['director']:<20}"
-              f"{movie['genre']:<10}{movie['year']:<10}{movie['rating']:<10}")
-
+              f"{movie['genre']:<15}{movie['year']:<10}"
+              f"{movie['rating']:<10.1f}")
         # 要修改的欄位
         title = input("請輸入新的電影名稱 (若不修改請直接按 Enter): ")
         director = input("請輸入新的導演 (若不修改請直接按 Enter): ")
@@ -192,7 +193,7 @@ def delete_movie(conn: sqlite3.Connection):
         # 刪除成功提示
     else:
         movie_title = input("請輸入要刪除的電影名稱: ")
-        # 輸入電影名稱
+        # 輸入電影名稱(可用關鍵字)
         cursor = conn.execute(
             "SELECT * FROM movies WHERE title LIKE ?",
             (f"%{movie_title}%",)
@@ -201,13 +202,12 @@ def delete_movie(conn: sqlite3.Connection):
         movie = cursor.fetchone()
 
         if movie:
-            # 顯示該電影資料
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<10}{'上映年份':<10}{'評分':<10}")
-            print("-" * 70)
+            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<10}{'評分':<10}")
+            print("-" * 85)
             print(f"{movie['title']:<20}{movie['director']:<20}"
-                  f"{movie['genre']:<10}{movie['year']:<10}"
-                  f"{movie['rating']:<10}")
-                  
+                  f"{movie['genre']:<15}{movie['year']:<10}"
+                  f"{movie['rating']:<10.1f}")
+
             confirm = input("是否要刪除(y/n): ").strip().lower()
             if confirm == 'y':
                 # 執行刪除操作
@@ -236,7 +236,10 @@ def export_movies(conn: sqlite3.Connection, output_file: str):
     else:
         # 當使用者選擇匯出特定電影
         title = input("請輸入要匯出的電影名稱: ")
-        cursor = conn.execute("SELECT * FROM movies WHERE title LIKE ?", (f"%{title}%",))
+        cursor = conn.execute(
+            "SELECT * FROM movies WHERE title LIKE ?",
+            (f"%{title}%",)
+        )
         movies = cursor.fetchall()
 
     # 檢查是否有符合條件的電影資料
@@ -245,9 +248,9 @@ def export_movies(conn: sqlite3.Connection, output_file: str):
         return
 
     # 將查詢結果轉換成 JSON 格式
-    movie_list = [{"title": movie['title'], 
+    movie_list = [{"title": movie['title'],
                    "director": movie['director'],
-                   "genre": movie['genre'], 
+                   "genre": movie['genre'],
                    "year": movie['year'],
                    "rating": movie['rating']} for movie in movies]
 
