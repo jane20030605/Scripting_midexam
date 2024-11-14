@@ -74,10 +74,10 @@ def list_movies(conn: sqlite3.Connection):
             # 格式化列出電影資料
             for movie in movies:
                 print(
-                    f"{movie['title']:<20}"
-                    f"{movie['director']:<20}"
-                    f"{movie['genre']:<15}"
-                    f"{movie['year']:<12}"
+                    f"{movie['title']:<20}",
+                    f"{movie['director']:<20}",
+                    f"{movie['genre']:<15}",
+                    f"{movie['year']:<12}",
                     f"{movie['rating']:<10.1f}"
                 )
     else:
@@ -98,10 +98,10 @@ def list_movies(conn: sqlite3.Connection):
             print("-" * 95)
             for movie in movies:
                 print(
-                    f"{movie['title']:<20}"
-                    f"{movie['director']:<20}"
-                    f"{movie['genre']:<15}"
-                    f"{movie['year']:<12}"
+                    f"{movie['title']:<20}",
+                    f"{movie['director']:<20}",
+                    f"{movie['genre']:<15}",
+                    f"{movie['year']:<12}",
                     f"{movie['rating']:<10.1f}"
                 )
 
@@ -142,10 +142,10 @@ def modify_movie(conn: sqlite3.Connection):
         print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
         print("-" * 95)
         print(
-            f"{movie['title']:<20}"
-            f"{movie['director']:<20}"
-            f"{movie['genre']:<15}"
-            f"{movie['year']:<12}"
+            f"{movie['title']:<20}",
+            f"{movie['director']:<20}",
+            f"{movie['genre']:<15}",
+            f"{movie['year']:<12}",
             f"{movie['rating']:<10.1f}"
         )
         # 要修改的欄位
@@ -215,10 +215,10 @@ def delete_movie(conn: sqlite3.Connection):
             print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
             print("-" * 95)
             print(
-                f"{movie['title']:<20}"
-                f"{movie['director']:<20}"
-                f"{movie['genre']:<15}"
-                f"{movie['year']:<12}"
+                f"{movie['title']:<20}",
+                f"{movie['director']:<20}",
+                f"{movie['genre']:<15}",
+                f"{movie['year']:<12}",
                 f"{movie['rating']:<10.1f}"
             )
 
