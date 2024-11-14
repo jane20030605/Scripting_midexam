@@ -68,18 +68,28 @@ def list_movies(conn: sqlite3.Connection):
             print("查無資料")
             # 當資料庫中沒有電影時，顯示提示
         else:
+            # 設定欄位寬度
+            title_width = 15
+            director_width = 12
+            genre_width = 8
+            year_width = 8
+            rating_width = 5
+
             # 顯示電影資料
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
-            print("-" * 95)
+            # 使用全形空白 chr(12288)
+            print(f"{'電影名稱':{chr(12288)}<{title_width}}"
+                  f"{'導演':{chr(12288)}<{director_width}}"
+                  f"{'類型':{chr(12288)}<{genre_width}}"
+                  f"{'上映年份':{chr(12288)}<{year_width}}"
+                  f"{'評分':{chr(12288)}<{rating_width}}")
+            print("-" * 100)
             # 格式化列出電影資料
             for movie in movies:
-                print(
-                    f"{movie['title']:<20}",
-                    f"{movie['director']:<20}",
-                    f"{movie['genre']:<15}",
-                    f"{movie['year']:<12}",
-                    f"{movie['rating']:<10.1f}"
-                )
+                print(f"{movie['title']:{chr(12288)}<{title_width}}"
+                      f"{movie['director']:{chr(12288)}<{director_width}}"
+                      f"{movie['genre']:{chr(12288)}<{genre_width}}"
+                      f"{movie['year']:{chr(12288)}<{year_width}}"
+                      f"{movie['rating']:{chr(12288)}<{rating_width}.1f}")
     else:
         title = input("請輸入電影名稱: ")
         # 如果不查詢全部電影，則要求輸入電影名稱
@@ -94,16 +104,20 @@ def list_movies(conn: sqlite3.Connection):
             # 如果沒有查詢到電影，顯示提示
         else:
             # 顯示查詢結果
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
-            print("-" * 95)
+            # 使用全形空白 chr(12288)
+            print(f"{'電影名稱':{chr(12288)}<{title_width}}"
+                  f"{'導演':{chr(12288)}<{director_width}}"
+                  f"{'類型':{chr(12288)}<{genre_width}}"
+                  f"{'上映年份':{chr(12288)}<{year_width}}"
+                  f"{'評分':{chr(12288)}<{rating_width}}")
+            print("-" * 100)
+            # 格式化列出電影資料
             for movie in movies:
-                print(
-                    f"{movie['title']:<20}",
-                    f"{movie['director']:<20}",
-                    f"{movie['genre']:<15}",
-                    f"{movie['year']:<12}",
-                    f"{movie['rating']:<10.1f}"
-                )
+                print(f"{movie['title']:{chr(12288)}<{title_width}}"
+                      f"{movie['director']:{chr(12288)}<{director_width}}"
+                      f"{movie['genre']:{chr(12288)}<{genre_width}}"
+                      f"{movie['year']:{chr(12288)}<{year_width}}"
+                      f"{movie['rating']:{chr(12288)}<{rating_width}.1f}")
 
 
 def add_movie(conn: sqlite3.Connection):
@@ -139,14 +153,14 @@ def modify_movie(conn: sqlite3.Connection):
     movie = cursor.fetchone()
     if movie:
         # 顯示該電影資料
-        print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
-        print("-" * 95)
+        print(f"{'電影名稱':<15}{'導演':<12}{'類型':<8}{'上映年份':<8}{'評分':<5}")
+        print("-" * 100)
         print(
-            f"{movie['title']:<20}",
-            f"{movie['director']:<20}",
-            f"{movie['genre']:<15}",
-            f"{movie['year']:<12}",
-            f"{movie['rating']:<10.1f}"
+            f"{movie['title']:<15}",
+            f"{movie['director']:<12}",
+            f"{movie['genre']:<8}",
+            f"{movie['year']:<8}",
+            f"{movie['rating']:<5.1f}"
         )
         # 要修改的欄位
         title = input("請輸入新的電影名稱 (若不修改請直接按 Enter): ")
@@ -212,14 +226,14 @@ def delete_movie(conn: sqlite3.Connection):
         movie = cursor.fetchone()
 
         if movie:
-            print(f"{'電影名稱':<20}{'導演':<20}{'類型':<15}{'上映年份':<12}{'評分':<10}")
-            print("-" * 95)
+            print(f"{'電影名稱':<15}{'導演':<12}{'類型':<8}{'上映年份':<8}{'評分':<5}")
+            print("-" * 100)
             print(
-                f"{movie['title']:<20}",
-                f"{movie['director']:<20}",
-                f"{movie['genre']:<15}",
-                f"{movie['year']:<12}",
-                f"{movie['rating']:<10.1f}"
+                f"{movie['title']:<15}",
+                f"{movie['director']:<12}",
+                f"{movie['genre']:<8}",
+                f"{movie['year']:<8}",
+                f"{movie['rating']:<5.1f}"
             )
 
             confirm = input("是否要刪除(y/n): ").strip().lower()
